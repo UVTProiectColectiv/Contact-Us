@@ -19,8 +19,8 @@
         <br>
         <textarea name="massage" rows="4" class="form-control" placeholder="Message" required></textarea>
         <br>
-        <input type="submit"  value="SEND MESSAGE" class="form-control submit">
-        <span class="success"><? echo $success?></span>
+        <input type="submit"  class="form-control submit">
+        <span class="success"><?php if (!empty($msg)) {echo "<h2>$msg</h2>";} ?></span>
       </form>
 
     </div>
