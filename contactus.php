@@ -1,24 +1,46 @@
 <?php
+  include "PHPMailer.php";
+  include "Exception.php";
+  include "SMTP.php";
+  
+ 
   $name = $_POST['name'];
-  $visitor_email = $POST['email'];
+  $visitor_email = $_POST['email'];
   $message = $_POST['message'];
-  $success = '';
+  $msg = '';
+  
+if (array_key_exists('email', $_POST)) {
+  date_default_timezone_set('Etc/UTC');
 
-  $email_from = 'bianca.stefanescu01@e-uvt.ro';
-  $email_subject = "New form submission";
-  $email_body = "User Name: $name.\n".
-                "User Email: $visitor_email.\n".
-                "User Message: $message.\n";
+  require_once "vendor/autoload.php";
 
-  $to = 'bianca.stefanesc55@gmail.com';
-  $headers = "From: $email_from \r\n";
-  $headers .= "Reaply-To: $visitor_email \r\n";
+  $mail = new PHPMailer(true);
 
-  if(mail($to,$email_subject,$email_body,$headers)){
-    $success = "Message sent, thank you for contacting us!";
-    $name = $visitor_email = $message ='';
-  }
+  $mail->isSMTP();
+    $mail->Host = 'localhost';
+    $mail->Port = 25;
+  $mail->setFrom('bianca.stefanesc55@gmail.com');
+  $mail->addAddress("bianca.stefanescu10@e-uvt.ro");
+  
 
+  if ($mail->addReplyTo($visitor_email, $name)) {
+    $mail->Subject = 'PHPMailer contact form';
+    $mail->isHTML(false);
+    $mail->Body = <<<EOT
+        Email: {$visitor_email}
+        Name: {$name}
+        Message: {$message}
+        EOT;
+
+    if (!$mail->send()) {
+        
+        $msg = 'Sorry, something went wrong. Please try again later.';
+    } else {
+        $msg = 'Message sent! Thanks for contacting us.';
+    }
+} else {
+    $msg = 'Invalid email address, message ignored.';
+}
+}
   header("Location: contactusform.php");
-
  ?>
